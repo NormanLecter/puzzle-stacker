@@ -27,6 +27,8 @@ class Main(QMainWindow):
         self.solve_button.clicked.connect(self.open_auto_solver_window)
         self.quit_button.setToolTip('Wyłączenie programu')
         self.quit_button.clicked.connect(QApplication.instance().quit)
+        pixmap = QPixmap('views/logo.jpg') # ścieżka
+        self.label.setPixmap(pixmap)
 
     def open_prompt_window(self):
         self.ui = PromptWindow()
@@ -64,6 +66,10 @@ class PromptWindow(QWidget):
         self.back_button.clicked.connect(self.open_main_window)
         self.next_button.setToolTip('Przejście do wybrania parametrów')
         self.next_button.clicked.connect(self.open_trackbars_window)
+        pixmap = QPixmap('views/logo.jpg')  # ścieżka
+        self.solved_image.setPixmap(pixmap)
+        pixmap = QPixmap('views/logo.jpg')  # ścieżka
+        self.shuffle_image.setPixmap(pixmap)
 
     def open_main_window(self):
         self.ui = Main()
@@ -214,6 +220,10 @@ class AutoSolverWindow(QWidget): # prawdopodobnie klasa bazowa dla promptwindow
         self.back_button.clicked.connect(self.open_main_window)
         self.next_button.setToolTip('Przejście do wybrania parametrów')
         self.next_button.clicked.connect(self.open_trackbars_window)
+        pixmap = QPixmap('views/logo.jpg')  # ścieżka
+        self.solved_image.setPixmap(pixmap)
+        pixmap = QPixmap('views/logo.jpg')  # ścieżka
+        self.shuffle_image.setPixmap(pixmap)
 
     def open_main_window(self):
         self.ui = Main()
@@ -247,6 +257,8 @@ class ShowOneResult(QWidget):
         self.back_button.clicked.connect(self.open_trackbars_window)
         self.main_button.setToolTip('Powrót do menu głównego')
         self.main_button.clicked.connect(self.open_main_window)
+        pixmap = QPixmap('views/logo.jpg')  # ścieżka
+        self.show_image.setPixmap(pixmap)
         #self.show_result()
 
 

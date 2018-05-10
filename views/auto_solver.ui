@@ -95,7 +95,7 @@
     <set>Qt::AlignCenter</set>
    </property>
   </widget>
-  <widget class="QLabel" name="logo">
+  <widget class="QLabel" name="solved_image">
    <property name="geometry">
     <rect>
      <x>460</x>
