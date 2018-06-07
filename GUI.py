@@ -1,8 +1,21 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QMainWindow
+from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QMainWindow, QMessageBox
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.uic import loadUi
-from Puzzle_stacker import resize_image, get_contours, crop_image, read_image
+from Puzzle_stacker import resize_image, get_contours, read_image, prompt_location
+'''FUNKCJE I ZMIENNE DO DEBUGOWANIA'''
+
+
+def catch_exceptions(t, val, tb):
+    QMessageBox.critical(None,
+                                   "An exception was raised",
+                                   "Exception type: {}".format(t))
+    old_hook(t, val, tb)
+
+
+old_hook = sys.excepthook
+sys.excepthook = catch_exceptions
+'''KONIEC FUNKCJI I ZMIENNYCH DO DEBUGOWANIA'''
 
 
 def display_image(image):
@@ -84,7 +97,7 @@ class PromptWindow(QWidget):
     def file_open_shuffle(self):
         options = QFileDialog.Options()
         self.path_to_shuffle_image, _ = QFileDialog.getOpenFileName(self, 'Podaj zdjęcie z rozsypanymi puzzlami', '',
-                                                  'Image files (*.jpg)', options=options)
+                                                                    'Image files (*.jpg *.png)', options=options)
         if self.path_to_shuffle_image:
             image = display_image(resize_image(self.path_to_shuffle_image, 315, 215))
             pixmap = QPixmap(image)
@@ -97,7 +110,7 @@ class PromptWindow(QWidget):
     def file_open_solved(self):
         options = QFileDialog.Options()
         self.path_to_solved_image, _ = QFileDialog.getOpenFileName(self, 'Podaj zdjęcie z ułożonymi puzzlami', '',
-                                                  'Image files (*.jpg)', options=options)
+                                                                   'Image files (*.jpg *.png)', options=options)
         if self.path_to_solved_image:
             image = display_image(resize_image(self.path_to_solved_image, 315, 215))
             pixmap = QPixmap(image)
@@ -122,12 +135,20 @@ class TrackbarsWindow(QWidget):
         self.default_button.clicked.connect(self.restore_default)
         self.next_button.setToolTip('Przejście do rozwiązania')
         self.next_button.clicked.connect(self.open_show_results)
+        self.help_button.setToolTip('Pomoc dotycząca obługi okna')
+        self.help_button.clicked.connect(self.open_help_window)
         self.value_change()
 
     def open_prompt_window(self):
         self.ui = PromptWindow()
         self.ui.show()
         self.hide()
+
+    def open_help_window(self):
+        self.ui = HelpWindow()
+        self.ui.show()
+
+
 
     def open_show_results(self):
         if self.path_to_solved_image is None:
@@ -150,11 +171,19 @@ class TrackbarsWindow(QWidget):
         self.contour_image.setPixmap(pixmap)
 
 
+class HelpWindow(QWidget):
+    def __init__(self):
+        super().__init__()
+        loadUi('views/help.ui', self)  # ścieżka
+        pixmap = QPixmap('views/threshold_good.jpg')  # ścieżka
+        self.good_image.setPixmap(pixmap)
+        pixmap = QPixmap('views/threshold_bad.jpg')  # ścieżka
+        self.bad_image.setPixmap(pixmap)
+
 class ShowResults(QWidget):
     def __init__(self, contours, path_to_solved_image, path_to_shuffle_image):
         super().__init__()
         loadUi('views/show_results.ui', self) # ścieżka
-        self.contours = contours
         self.path_to_shuffle_image = path_to_shuffle_image
         self.path_to_solved_image = path_to_solved_image
         self.back_button.setToolTip('Powrót do dostosowania parametrów')
@@ -167,7 +196,7 @@ class ShowResults(QWidget):
         self.next_button.clicked.connect(self.next_image)
         self.results = []
         self.position = 0
-        self.prepare_result()
+        self.prepare_result(contours)
         self.show_result(self.position)
 
 
@@ -195,13 +224,9 @@ class ShowResults(QWidget):
             self.position = self.position + 1
         self.show_result(self.position)
 
-    def prepare_result(self):
-        #for contour in self.contours:
-            #image = crop_image(self.path_to_shuffle_image, contour, i)
-            #image = resize_image(image, 340, 710)
-            #self.results.append(display_image(image))
-        for i in range(0,11):
-            image = read_image('test_images/' + str(i) + '.jpg') # ścieżka
+    def prepare_result(self, contours):
+        images_with_prompt = prompt_location(self.path_to_shuffle_image, self.path_to_solved_image, contours)
+        for image in images_with_prompt:
             image = resize_image(image, 340, 710)
             self.results.append(display_image(image))
 
@@ -239,7 +264,7 @@ class AutoSolverWindow(QWidget): # prawdopodobnie klasa bazowa dla promptwindow
         options = QFileDialog.Options()
         self.path_to_shuffle_image, _ = QFileDialog.getOpenFileName(self, 'Podaj zdjęcie z rozsypanymi puzzlami',
                                                                     '',
-                                                                    'Image files (*.jpg)', options=options)
+                                                                    'Image files (*.jpg *.png)', options=options)
         if self.path_to_shuffle_image:
             image = display_image(resize_image(self.path_to_shuffle_image, 315, 215))
             pixmap = QPixmap(image)
@@ -257,10 +282,7 @@ class ShowOneResult(QWidget):
         self.back_button.clicked.connect(self.open_trackbars_window)
         self.main_button.setToolTip('Powrót do menu głównego')
         self.main_button.clicked.connect(self.open_main_window)
-        pixmap = QPixmap('views/logo.jpg')  # ścieżka
-        self.show_image.setPixmap(pixmap)
-        #self.show_result()
-
+        self.show_result()
 
     def open_trackbars_window(self):
         self.ui = TrackbarsWindow(self.path_to_shuffle_image, None)
@@ -273,8 +295,8 @@ class ShowOneResult(QWidget):
         self.hide()
 
     def show_result(self):
-        image = read_image('all.jpg')  # ścieżka
-        pixmap = QPixmap(resize_image(image, 340, 710))
+        image = read_image(self.path_to_shuffle_image)  # ścieżka
+        pixmap = QPixmap(display_image(resize_image(image, 340, 730)))
         self.show_image.setPixmap(pixmap)
 
 
