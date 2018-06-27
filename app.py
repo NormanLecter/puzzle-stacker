@@ -2,7 +2,8 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog, QMainWindow, QMessageBox
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.uic import loadUi
-from Puzzle_stacker import resize_image, get_contours, read_image, prompt_location
+from prompts_to_puzzle import resize_image, get_contours, prompt_location
+from assemble_puzzle import try_to_assemble_puzzles
 '''FUNKCJE I ZMIENNE DO DEBUGOWANIA'''
 
 
@@ -140,15 +141,16 @@ class TrackbarsWindow(QWidget):
         self.value_change()
 
     def open_prompt_window(self):
-        self.ui = PromptWindow()
+        if self.path_to_solved_image is None:
+            self.ui = AutoSolverWindow()
+        else:
+            self.ui = PromptWindow()
         self.ui.show()
         self.hide()
 
     def open_help_window(self):
         self.ui = HelpWindow()
         self.ui.show()
-
-
 
     def open_show_results(self):
         if self.path_to_solved_image is None:
@@ -179,6 +181,7 @@ class HelpWindow(QWidget):
         self.good_image.setPixmap(pixmap)
         pixmap = QPixmap('views/threshold_bad.jpg')  # ścieżka
         self.bad_image.setPixmap(pixmap)
+
 
 class ShowResults(QWidget):
     def __init__(self, contours, path_to_solved_image, path_to_shuffle_image):
@@ -295,8 +298,8 @@ class ShowOneResult(QWidget):
         self.hide()
 
     def show_result(self):
-        image = read_image(self.path_to_shuffle_image)  # ścieżka
-        pixmap = QPixmap(display_image(resize_image(image, 340, 730)))
+        self.show_image.setScaledContents(True)
+        pixmap = QPixmap(display_image(try_to_assemble_puzzles(self.path_to_shuffle_image, self.contours)))
         self.show_image.setPixmap(pixmap)
 
 

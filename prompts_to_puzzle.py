@@ -21,7 +21,7 @@ def resize_image(data, label_height, label_width):
     while True:
         height, width, _ = resize.shape
         if height > label_height or width > label_width:
-            resize = cv2.resize(image, (0,0), fx=x, fy=y)
+            resize = cv2.resize(image, (0, 0), fx=x, fy=y)
             x = x - 0.05
             y = y - 0.05
         else:
