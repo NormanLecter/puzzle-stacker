@@ -34,14 +34,14 @@ class Main(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        loadUi('views/main.ui',self) # ścieżka
+        loadUi('views/main.ui', self)
         self.prompt_button.setToolTip('Program pokazuje podpowiedzi na podstawie ułożonego obrazu')
         self.prompt_button.clicked.connect(self.open_prompt_window)
         self.solve_button.setToolTip('Program ułoży automatycznie puzzle')
         self.solve_button.clicked.connect(self.open_auto_solver_window)
         self.quit_button.setToolTip('Wyłączenie programu')
         self.quit_button.clicked.connect(QApplication.instance().quit)
-        pixmap = QPixmap('views/logo.jpg') # ścieżka
+        pixmap = QPixmap('views/logo.jpg')
         self.label.setPixmap(pixmap)
 
     def open_prompt_window(self):
@@ -54,23 +54,11 @@ class Main(QMainWindow):
         self.ui.show()
         self.hide()
 
-    '''
-    def clearLayout(self, layout):
-        if layout is not None:
-            while layout.count():
-                item = layout.takeAt(0)
-                widget = item.widget()
-                if widget is not None:
-                    widget.deleteLater()
-                else:
-                    self.clearLayout(item.layout())
-    '''
-
 
 class PromptWindow(QWidget):
     def __init__(self):
         super().__init__()
-        loadUi('views/prompt.ui', self) # ścieżka
+        loadUi('views/prompt.ui', self)
         self.images_load = False
         self.open_shuffle_button.setToolTip('Podaj zdjęcie z rozsypanymi puzzlami')
         self.open_shuffle_button.clicked.connect(self.file_open_shuffle)
@@ -80,9 +68,9 @@ class PromptWindow(QWidget):
         self.back_button.clicked.connect(self.open_main_window)
         self.next_button.setToolTip('Przejście do wybrania parametrów')
         self.next_button.clicked.connect(self.open_trackbars_window)
-        pixmap = QPixmap('views/logo.jpg')  # ścieżka
+        pixmap = QPixmap('views/logo.jpg')
         self.solved_image.setPixmap(pixmap)
-        pixmap = QPixmap('views/logo.jpg')  # ścieżka
+        pixmap = QPixmap('views/logo.jpg')
         self.shuffle_image.setPixmap(pixmap)
 
     def open_main_window(self):
@@ -125,7 +113,7 @@ class PromptWindow(QWidget):
 class TrackbarsWindow(QWidget):
     def __init__(self, path_to_shuffle_image, path_to_solved_image):
         super().__init__()
-        loadUi('views/trackbars.ui', self) # ścieżka
+        loadUi('views/trackbars.ui', self)
         self.path_to_shuffle_image = path_to_shuffle_image
         self.path_to_solved_image = path_to_solved_image
         self.min_slider.valueChanged.connect(self.value_change)
@@ -176,17 +164,17 @@ class TrackbarsWindow(QWidget):
 class HelpWindow(QWidget):
     def __init__(self):
         super().__init__()
-        loadUi('views/help.ui', self)  # ścieżka
-        pixmap = QPixmap('views/threshold_good.jpg')  # ścieżka
+        loadUi('views/help.ui', self)
+        pixmap = QPixmap('views/threshold_good.jpg')
         self.good_image.setPixmap(pixmap)
-        pixmap = QPixmap('views/threshold_bad.jpg')  # ścieżka
+        pixmap = QPixmap('views/threshold_bad.jpg')
         self.bad_image.setPixmap(pixmap)
 
 
 class ShowResults(QWidget):
     def __init__(self, contours, path_to_solved_image, path_to_shuffle_image):
         super().__init__()
-        loadUi('views/show_results.ui', self) # ścieżka
+        loadUi('views/show_results.ui', self)
         self.path_to_shuffle_image = path_to_shuffle_image
         self.path_to_solved_image = path_to_solved_image
         self.back_button.setToolTip('Powrót do dostosowania parametrów')
@@ -238,19 +226,19 @@ class ShowResults(QWidget):
         self.show_image.setPixmap(pixmap)
 
 
-class AutoSolverWindow(QWidget): # prawdopodobnie klasa bazowa dla promptwindow
+class AutoSolverWindow(QWidget):
     def __init__(self):
         super().__init__()
-        loadUi('views/auto_solver.ui', self)  # ścieżka
+        loadUi('views/auto_solver.ui', self)
         self.open_shuffle_button.setToolTip('Podaj zdjęcie z rozsypanymi puzzlami')
         self.open_shuffle_button.clicked.connect(self.file_open_shuffle)
         self.back_button.setToolTip('Powrót do ekranu głównego')
         self.back_button.clicked.connect(self.open_main_window)
         self.next_button.setToolTip('Przejście do wybrania parametrów')
         self.next_button.clicked.connect(self.open_trackbars_window)
-        pixmap = QPixmap('views/logo.jpg')  # ścieżka
+        pixmap = QPixmap('views/logo.jpg')
         self.solved_image.setPixmap(pixmap)
-        pixmap = QPixmap('views/logo.jpg')  # ścieżka
+        pixmap = QPixmap('views/logo.jpg')
         self.shuffle_image.setPixmap(pixmap)
 
     def open_main_window(self):
@@ -278,7 +266,7 @@ class AutoSolverWindow(QWidget): # prawdopodobnie klasa bazowa dla promptwindow
 class ShowOneResult(QWidget):
     def __init__(self, contours, path_to_shuffle_image):
         super().__init__()
-        loadUi('views/show_result.ui', self) # ścieżka
+        loadUi('views/show_result.ui', self)
         self.contours = contours
         self.path_to_shuffle_image = path_to_shuffle_image
         self.back_button.setToolTip('Powrót do dostosowania parametrów')

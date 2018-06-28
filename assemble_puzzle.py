@@ -145,6 +145,7 @@ def assemble_the_puzzles(single_puzzles, width, height):
     image = Image.new("RGBA", (width + 500, height))
     actual_height = 0
     actual_width = 0
+    max_width = 0
     for y in range(len(final_puzzles)):
         y_values = []
         for x in range(len(final_puzzles[y])):
@@ -154,11 +155,14 @@ def assemble_the_puzzles(single_puzzles, width, height):
             actual_width += width
 
             y_values.append(height)
+        if actual_width > max_width:
+            max_width = actual_width
         actual_width = 0
         actual_height += max(y_values)
 
     open_cv_image = np.array(image)
-    return open_cv_image
+    trimmed_image = open_cv_image[0:actual_height, 0:max_width]
+    return np.array(trimmed_image)
 
 
 def complete_field(final_puzzles, unfitted_puzzles, horizontal_position, perpendicularly_position, horizontal_array_size,
