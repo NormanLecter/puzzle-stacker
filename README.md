@@ -1,5 +1,5 @@
 # PUZZLE-STACKER
-Wykorzystanie Tensorflow for poets z danymi zawartymi na stronie https://www.kaggle.com/olgabelitskaya/traditional-decor-patterns/data.
+Wykorzystanie OpenCV do układania oraz wyświetlania podpowiedzi do Puzzli.
 
 Poniższe rozwiązanie było testowane na systemie Windows oraz Linux z wersją Pythona 3.
 
