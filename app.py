@@ -273,7 +273,12 @@ class ShowOneResult(QWidget):
         self.back_button.clicked.connect(self.open_trackbars_window)
         self.main_button.setToolTip('Powrót do menu głównego')
         self.main_button.clicked.connect(self.open_main_window)
-        self.show_result()
+        try:
+            self.show_result()
+        except IndexError:
+            self.show_image.setText("Nie udało się ułożyć puzzli spróbuj zmienić wartość progowania lub powróć do menu "
+                                    "głównego")
+            self.open_main_window()
 
     def open_trackbars_window(self):
         self.ui = TrackbarsWindow(self.path_to_shuffle_image, None)
